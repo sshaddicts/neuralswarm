@@ -1,4 +1,12 @@
 language: java
 
+sudo: required
+
+services:
+  - docker
+
+script:
+  - mvn clean install -T 1C
+
 notifications:
   webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
