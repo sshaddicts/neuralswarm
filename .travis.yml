@@ -5,6 +5,14 @@ sudo: required
 services:
   - docker
 
+install:
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -U -T 1C
+
+cache:
+  directories:
+  - .autoconf
+  - $HOME/.m2
+
 script:
   - mvn clean install -T 1C
 
