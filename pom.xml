@@ -200,7 +200,7 @@
                     <archive>
                         <index>true</index>
                         <manifest>
-                            <mainClass>com.github.sshaddicts.MainKt</mainClass>
+                            <mainClass>com.github.sshaddicts.nauralswarm.MainKt</mainClass>
                             <classpathPrefix>lib/</classpathPrefix>
                             <addClasspath>true</addClasspath>
                         </manifest>
