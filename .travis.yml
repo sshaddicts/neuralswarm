@@ -6,7 +6,7 @@ services:
   - docker
 
 install:
-  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -U -T 1C
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true --batch-mode --show-version --settings .travis.settings.xml
 
 cache:
   directories:
