@@ -7,7 +7,8 @@
 #### Build & Run
 
 ```bash
-mvn install -T 1C
+mvn clean install -T 1C
+docker-compose build
 docker-compose up
 ```
 
