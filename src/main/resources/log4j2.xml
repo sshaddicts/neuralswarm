@@ -4,7 +4,7 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="[%d{HH:mm:ss.SSS}] %-5level - %msg%n"/>
         </Console>
-        <File name="File" fileName="logs/emojismash.log" immediateFlush="true" append="false">
+        <File name="File" fileName="logs/neuralswarm.log" immediateFlush="true" append="false">
             <PatternLayout pattern="[%d{HH:mm:ss.SSS}] %-5level - %msg%n"/>
         </File>
     </Appenders>

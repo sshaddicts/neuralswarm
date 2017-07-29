@@ -11,8 +11,8 @@ class Root : UntypedActor() {
 
     val log: LoggingAdapter = Logging.getLogger(context.system(), this)
 
-    init {
-        log.debug("Root actor has been started.")
+    override fun preStart() {
+        log.info("Root actor has been created.")
     }
 
     override fun onReceive(message: Any?) {
