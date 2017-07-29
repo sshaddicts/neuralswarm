@@ -1,0 +1,19 @@
+version: '2'
+
+services:
+  crossbar:
+    image: crossbario/crossbar
+    ports:
+     - "6789:8080"
+    restart: always
+    logging:
+      driver: none
+  mongo:
+    image: mongo
+    restart: always
+    logging:
+      driver: none
+  neuralswarm:
+    build: .
+    logging:
+      driver: syslog

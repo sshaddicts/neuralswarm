@@ -1,0 +1,4 @@
+#! /usr/bin/env bash
+
+mvn install -T 1C
+docker-compose up
