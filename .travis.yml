@@ -1,1 +1,4 @@
 language: java
+
+notifications:
+  webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
