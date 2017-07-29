@@ -6,15 +6,13 @@ services:
   - docker
 
 install:
+  - mkdir -p target/lib
   - mvn install -DskipTests=true -Dmaven.javadoc.skip=true --batch-mode --show-version --settings .travis.settings.xml
 
 cache:
   directories:
   - .autoconf
   - $HOME/.m2
-
-script:
-  - mvn clean install -T 1C
 
 notifications:
   webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
