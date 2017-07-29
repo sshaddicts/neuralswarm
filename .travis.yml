@@ -1,10 +1,5 @@
 language: java
 
-sudo: required
-
-services:
-  - docker
-
 install:
   - mvn install -DskipTests=true -Dmaven.javadoc.skip=true --batch-mode --show-version --settings .travis.settings.xml
 
