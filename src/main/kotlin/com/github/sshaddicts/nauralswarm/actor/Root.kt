@@ -9,7 +9,9 @@ import akka.event.LoggingAdapter
 
 class Root : UntypedActor() {
 
-    val log: LoggingAdapter = Logging.getLogger(context.system(), this)
+    private val log: LoggingAdapter = Logging.getLogger(context.system(), this)
+
+    private val api = context.actorOf(ApiActor.props())
 
     override fun preStart() {
         log.info("Root actor has been created.")
