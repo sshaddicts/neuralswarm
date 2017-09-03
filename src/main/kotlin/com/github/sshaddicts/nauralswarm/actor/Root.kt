@@ -3,22 +3,35 @@ package com.github.sshaddicts.nauralswarm.actor
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
 import akka.actor.Props
-import akka.actor.UntypedActor
 import akka.event.Logging
 import akka.event.LoggingAdapter
+import com.github.sshaddicts.nauralswarm.actor.message.GetRouter
+import com.github.sshaddicts.nauralswarm.utils.akka.NeuralswarmActor
+import kotlin.reflect.KClassifier
 
-class Root : UntypedActor() {
-
+class Root : NeuralswarmActor() {
     private val log: LoggingAdapter = Logging.getLogger(context.system(), this)
 
-    private val api = context.actorOf(ApiActor.props())
+    private val actors: MutableMap<KClassifier, ActorRef> = mutableMapOf(
+            ApiActor::class to context.actorOf(ApiActor.props),
+            StorageActor::class to context.actorOf(StorageActor.props),
+            ImageProcessorActor::class to context.actorOf(ImageProcessorActor.props)
+    )
+
+    init {
+        log.debug("${javaClass.simpleName} created.")
+    }
 
     override fun preStart() {
+
+        actors[RouterActor::class] = context.actorOf(RouterActor.props(actors))
+
         log.info("Root actor has been created.")
     }
 
-    override fun onReceive(message: Any?) {
-
+    override fun onReceive(message: Any?) = when (message) {
+        is GetRouter -> sender tell actors[RouterActor::class]
+        else -> log.error("illegal message: $message")
     }
 
     companion object {
