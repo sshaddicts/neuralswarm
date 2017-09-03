@@ -1,10 +1,11 @@
 package com.github.sshaddicts.nauralswarm.actor.abstract
 
-import akka.actor.UntypedActor
 import akka.event.DiagnosticLoggingAdapter
+import com.github.sshaddicts.nauralswarm.utils.akka.NeuralswarmActor
 import com.github.sshaddicts.nauralswarm.utils.akka.config
 import nl.komponents.kovenant.Deferred
 import nl.komponents.kovenant.deferred
+import rx.Observable
 import ws.wamp.jawampa.WampClient
 import ws.wamp.jawampa.WampClientBuilder
 import ws.wamp.jawampa.WampSerialization
@@ -14,7 +15,7 @@ import ws.wamp.jawampa.transport.netty.NettyWampConnectionConfig
 import java.util.concurrent.TimeUnit
 
 
-abstract class WampActor(uri: String, realm: String) : UntypedActor() {
+abstract class WampActor(uri: String, realm: String) : NeuralswarmActor() {
 
     abstract val log: DiagnosticLoggingAdapter
 
@@ -39,23 +40,23 @@ abstract class WampActor(uri: String, realm: String) : UntypedActor() {
             .withReconnectInterval(config.getInt("wamp.reconnect-interval"), TimeUnit.SECONDS)
             .withSerializations(arrayOf(WampSerialization.MessagePack))
 
-    protected fun startWamp() {
-        try {
-            val wamp = builder.build()
+    protected fun startWamp(): Observable<WampClient> {
+        val wamp = builder.build()
 
-            wamp.statusChanged()
-                    .subscribe { status ->
-                        log.debug(status.toString())
-                        when (status) {
-                            is WampClient.ConnectedState ->
-                                defer.resolve(wamp)
-                        }
-                    }
-
-            wamp.open()
-        } catch (e: Throwable) {
-            log.error(e, "Wamp build/connection failed!")
+        wamp.statusChanged().subscribe {
+            log.debug("WAMP status: $it")
         }
+
+        val obs = wamp.statusChanged().filter { it is WampClient.ConnectedState }
+                .map {
+                    defer.resolve(wamp)
+                    wamp
+                }
+
+
+        wamp.open()
+
+        return obs
     }
 
     protected fun stopWamp() = connection { it.close() }

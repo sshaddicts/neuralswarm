@@ -2,15 +2,19 @@ version: '2'
 
 services:
   crossbar:
-      build: ./.crossbar
-      ports:
-       - "7777:7777"
-#  mongo:
-#    image: mongo
-#    restart: always
-#    logging:
-#      driver: none
-#  neuralswarm:
-#    build: .
-#    logging:
-#      driver: syslog
+    build: ./crossbar
+    ports:
+      - "7778:7778"
+
+  mongo:
+    image: mongo
+    logging:
+      driver: none
+    ports:
+      - "27017:27017"
+
+  neuralswarm:
+    build: .
+    depends_on:
+      - crossbar
+      - mongo
