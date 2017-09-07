@@ -1,4 +1,4 @@
-package com.github.sshaddicts.nauralswarm.utils.token
+package com.github.sshaddicts.neuralswarm.utils.token
 
 import java.security.MessageDigest
 import java.util.*

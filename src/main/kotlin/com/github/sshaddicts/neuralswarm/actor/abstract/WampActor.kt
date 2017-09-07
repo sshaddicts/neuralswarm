@@ -1,8 +1,8 @@
-package com.github.sshaddicts.nauralswarm.actor.abstract
+package com.github.sshaddicts.neuralswarm.actor.abstract
 
 import akka.event.DiagnosticLoggingAdapter
-import com.github.sshaddicts.nauralswarm.utils.akka.NeuralswarmActor
-import com.github.sshaddicts.nauralswarm.utils.akka.config
+import com.github.sshaddicts.neuralswarm.utils.akka.NeuralswarmActor
+import com.github.sshaddicts.neuralswarm.utils.akka.config
 import nl.komponents.kovenant.Deferred
 import nl.komponents.kovenant.deferred
 import rx.Observable

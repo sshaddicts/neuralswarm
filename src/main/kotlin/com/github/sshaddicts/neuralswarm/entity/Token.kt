@@ -1,8 +1,8 @@
-package com.github.sshaddicts.nauralswarm.entity
+package com.github.sshaddicts.neuralswarm.entity
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.github.sshaddicts.nauralswarm.utils.serialization.mapper
-import com.github.sshaddicts.nauralswarm.utils.token.Aes
+import com.github.sshaddicts.neuralswarm.utils.serialization.mapper
+import com.github.sshaddicts.neuralswarm.utils.token.Aes
 
 data class Token(
         val userId: String,

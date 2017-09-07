@@ -1,12 +1,12 @@
-package com.github.sshaddicts.nauralswarm.actor
+package com.github.sshaddicts.neuralswarm.actor
 
 import akka.actor.ActorRef
 import akka.actor.Props
 import akka.event.DiagnosticLoggingAdapter
 import akka.event.Logging
-import com.github.sshaddicts.nauralswarm.actor.message.GetProcessor
-import com.github.sshaddicts.nauralswarm.actor.message.GetStorage
-import com.github.sshaddicts.nauralswarm.utils.akka.NeuralswarmActor
+import com.github.sshaddicts.neuralswarm.actor.message.GetProcessor
+import com.github.sshaddicts.neuralswarm.actor.message.GetStorage
+import com.github.sshaddicts.neuralswarm.utils.akka.NeuralswarmActor
 import kotlin.reflect.KClassifier
 
 class RouterActor(private val actors: Map<KClassifier, ActorRef>) : NeuralswarmActor() {

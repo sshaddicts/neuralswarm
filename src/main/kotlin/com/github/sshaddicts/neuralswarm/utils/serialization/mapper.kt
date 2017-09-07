@@ -1,4 +1,4 @@
-package com.github.sshaddicts.nauralswarm.utils.serialization
+package com.github.sshaddicts.neuralswarm.utils.serialization
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule

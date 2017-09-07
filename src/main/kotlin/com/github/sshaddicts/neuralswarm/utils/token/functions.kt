@@ -1,6 +1,6 @@
-package com.github.sshaddicts.nauralswarm.utils.token
+package com.github.sshaddicts.neuralswarm.utils.token
 
-import com.github.sshaddicts.nauralswarm.entity.User
+import com.github.sshaddicts.neuralswarm.entity.User
 import java.math.BigInteger
 import java.util.*
 import javax.crypto.SecretKeyFactory

@@ -1,4 +1,4 @@
-package com.github.sshaddicts.nauralswarm.utils.akka
+package com.github.sshaddicts.neuralswarm.utils.akka
 
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
