@@ -31,7 +31,7 @@
         <kotlin.version>1.1.4-3</kotlin.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <junit.version>4.12</junit.version>
-        <main.class>com.github.sshaddicts.nauralswarm.MainKt</main.class>
+        <main.class>com.github.sshaddicts.neuralswarm.MainKt</main.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>com.github.sshaddicts</groupId>
             <artifactId>neuralswarm.client</artifactId>
-            <version>0.0.5</version>
+            <version>0.0.6</version>
         </dependency>
 
         <dependency>
@@ -218,7 +218,7 @@
                     <archive>
                         <index>true</index>
                         <manifest>
-                            <mainClass>com.github.sshaddicts.nauralswarm.MainKt</mainClass>
+                            <mainClass>com.github.sshaddicts.neuralswarm.MainKt</mainClass>
                             <classpathPrefix>lib/</classpathPrefix>
                             <addClasspath>true</addClasspath>
                         </manifest>

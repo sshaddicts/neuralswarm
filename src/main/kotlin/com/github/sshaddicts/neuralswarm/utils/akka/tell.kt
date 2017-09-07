@@ -1,4 +1,4 @@
-package com.github.sshaddicts.nauralswarm.utils.akka
+package com.github.sshaddicts.neuralswarm.utils.akka
 
 import akka.actor.ActorRef
 import akka.actor.UntypedActor

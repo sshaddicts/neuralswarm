@@ -1,6 +1,8 @@
-package com.github.sshaddicts.nauralswarm.entity
+package com.github.sshaddicts.neuralswarm.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.github.sshaddicts.neuralclient.data.ProcessedData
+import org.apache.commons.lang3.StringUtils
 import org.litote.kmongo.MongoId
 import java.util.*
 
@@ -11,8 +13,8 @@ data class User (
         val name: String,
         val hash: String,
         val registrationDate: Date,
-        private var tokenId: String = UUID.randomUUID().toString().replace("-", "kek"),
-        val bills: List<Bill> = ArrayList()
+        val tokenId: String = UUID.randomUUID().toString().replace("-", StringUtils.EMPTY),
+        val history: MutableList<ProcessedData> = ArrayList()
 ) {
     @get:JsonIgnore
     val token: Token

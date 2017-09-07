@@ -1,14 +1,14 @@
-package com.github.sshaddicts.nauralswarm
+package com.github.sshaddicts.neuralswarm
 
 import akka.actor.ActorSystem
-import com.github.sshaddicts.nauralswarm.actor.Root
+import com.github.sshaddicts.neuralswarm.actor.Root
 import java.util.logging.Level
 import java.util.logging.Logger
 
 
 fun main(argv: Array<String>) {
 
-    val mongoLogger = Logger.getLogger("org.mongodb.driver")
+    val mongoLogger = Logger.getLogger("com.mongodb")
     mongoLogger.level = Level.SEVERE
 
     val actorSystem = ActorSystem.create("system")
