@@ -1,7 +1,19 @@
 language: java
 
+sudo: required
+
+services:
+  - docker
+
 install:
   - mvn install -DskipTests=true -Dmaven.javadoc.skip=true --batch-mode --show-version --settings .travis.settings.xml
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker build . -t sshaddicts/neuralswarm;
+    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    docker push sshaddicts/neuralswarm;
+    fi
 
 cache:
   directories:

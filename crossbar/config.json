@@ -6,10 +6,10 @@
       "type": "router",
       "realms": [
         {
-          "name": "realm1",
+          "name": "api",
           "roles": [
             {
-              "name": "anonymous",
+              "name": "backend",
               "permissions": [
                 {
                   "uri": "",
@@ -27,32 +27,54 @@
                   "cache": true
                 }
               ]
+            },
+            {
+              "name": "user",
+              "permissions": [
+                {
+                  "uri": "",
+                  "match": "prefix",
+                  "allow": {
+                    "call": true,
+                    "register": false,
+                    "publish": false,
+                    "subscribe": true
+                  },
+                  "disclose": {
+                    "caller": false,
+                    "publisher": false
+                  },
+                  "cache": true
+                }
+              ]
             }
           ]
         }
       ],
       "transports": [
         {
-          "type": "web",
+          "type": "websocket",
+          "endpoint": {
+            "type": "tcp",
+            "port": 6668
+          },
+          "auth": {
+            "anonymous": {
+              "type": "static",
+              "role": "backend"
+            }
+          }
+        },
+        {
+          "type": "websocket",
           "endpoint": {
             "type": "tcp",
             "port": 7778
           },
-          "paths": {
-            "matchmaking": {
-              "type": "websocket"
-            },
-            "instances": {
-              "type": "websocket"
-            },
-            "users": {
-              "type": "websocket"
-            },
-            "api": {
-              "type": "websocket"
-            },
-            "emessenger": {
-              "type": "websocket"
+          "auth": {
+            "anonymous": {
+              "type": "static",
+              "role": "user"
             }
           }
         }

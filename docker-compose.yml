@@ -2,7 +2,7 @@ version: '2'
 
 services:
   crossbar:
-    build: ./crossbar
+    image: sshaddicts/crossbar-for-neuralswarm:latest
     ports:
       - "7778:7778"
 
@@ -14,7 +14,4 @@ services:
       - "27017:27017"
 
   neuralswarm:
-    build: .
-    depends_on:
-      - crossbar
-      - mongo
+    image: neuralswarm:latest

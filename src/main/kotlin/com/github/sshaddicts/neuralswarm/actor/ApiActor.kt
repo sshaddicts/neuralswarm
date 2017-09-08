@@ -20,7 +20,7 @@ import ws.wamp.jawampa.ApplicationError
 import ws.wamp.jawampa.Request
 import ws.wamp.jawampa.WampClient
 
-class ApiActor : WampActor("ws://crossbar:7778/api", "realm1") {
+class ApiActor : WampActor("ws://crossbar:6668", "api") {
 
     private val errorHandler: (Throwable) -> Unit = { log.error(it, it.message) }
 
