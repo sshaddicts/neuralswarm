@@ -8,7 +8,7 @@
 
 ```bash
 mvn clean install -T 1C
-docker-compose build
+docker build . -t neuralswarm
 docker-compose up
 ```
 
