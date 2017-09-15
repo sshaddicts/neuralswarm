@@ -4,6 +4,9 @@ import akka.actor.ActorRef
 import akka.actor.Props
 import akka.event.DiagnosticLoggingAdapter
 import akka.event.Logging
+import com.github.kittinunf.fuel.Fuel
+import com.github.sshaddicts.lucrecium.imageProcessing.ImageProcessor
+import com.github.sshaddicts.lucrecium.neuralNetwork.TextRecognizer
 import com.github.sshaddicts.neuralclient.data.ProcessImageRequest
 import com.github.sshaddicts.neuralclient.data.ProcessedData
 import com.github.sshaddicts.neuralswarm.actor.message.GetRouter
@@ -13,8 +16,10 @@ import com.github.sshaddicts.neuralswarm.actor.message.Save
 import com.github.sshaddicts.neuralswarm.entity.User
 import com.github.sshaddicts.neuralswarm.utils.akka.NeuralswarmActor
 import com.github.sshaddicts.neuralswarm.utils.akka.ask
-import com.github.sshaddicts.neuralswarm.utils.serialization.mapper
 import kotlinx.coroutines.experimental.*
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 
 
 class ImageProcessorActor : NeuralswarmActor() {
@@ -27,17 +32,26 @@ class ImageProcessorActor : NeuralswarmActor() {
         }
     }
 
-    private fun getDataFromLucrecium(bytes: ByteArray): ProcessedData {
-        val node = mapper.createObjectNode()
+    private fun getDataFromLucrecium(bytes: ByteArray, width: Int, height: Int): ProcessedData {
 
-        node.put("name", "суміш ароматична \"Сметана та зелень\"")
-        node.put("price", 15.99)
+        val processor = ImageProcessor(bytes, width, height)
 
-        return ProcessedData(listOf(node))
+        val data = processor.findTextRegions(ImageProcessor.NO_MERGE)
+        val recognizer = TextRecognizer("netFile.nf")
+
+        return ProcessedData(recognizer.getText(data))
     }
 
     init {
         log.debug("${javaClass.simpleName} created.")
+
+        if(Files.exists(Paths.get("netFile.nf"))){
+            Fuel.download("http://httpbin.org/bytes/32768").destination { response, url ->
+                File.createTempFile("temp", ".tmp")
+            }.response { req, res, result ->
+
+            }
+        }
     }
 
     override fun onReceive(message: Any?) {
@@ -53,7 +67,7 @@ class ImageProcessorActor : NeuralswarmActor() {
 
                 sender tell if (user != null) {
 
-                    val data = getDataFromLucrecium(message.bytes)
+                    val data = getDataFromLucrecium(message.bytes, message.details.width, message.details.height)
 
                     user.history.add(data)
 
