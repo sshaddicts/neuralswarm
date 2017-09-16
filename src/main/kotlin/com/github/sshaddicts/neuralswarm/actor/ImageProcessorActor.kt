@@ -1,12 +1,12 @@
 package com.github.sshaddicts.neuralswarm.actor
 
+//import com.github.kittinunf.fuel.Fuel
+//import com.github.sshaddicts.lucrecium.imageProcessing.ImageProcessor
+//import com.github.sshaddicts.lucrecium.neuralNetwork.TextRecognizer
 import akka.actor.ActorRef
 import akka.actor.Props
 import akka.event.DiagnosticLoggingAdapter
 import akka.event.Logging
-//import com.github.kittinunf.fuel.Fuel
-//import com.github.sshaddicts.lucrecium.imageProcessing.ImageProcessor
-//import com.github.sshaddicts.lucrecium.neuralNetwork.TextRecognizer
 import com.github.sshaddicts.neuralclient.data.ProcessImageRequest
 import com.github.sshaddicts.neuralclient.data.ProcessedData
 import com.github.sshaddicts.neuralswarm.actor.message.GetRouter
@@ -18,9 +18,6 @@ import com.github.sshaddicts.neuralswarm.utils.akka.NeuralswarmActor
 import com.github.sshaddicts.neuralswarm.utils.akka.ask
 import com.github.sshaddicts.neuralswarm.utils.serialization.mapper
 import kotlinx.coroutines.experimental.*
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
 
 
 class ImageProcessorActor : NeuralswarmActor() {
@@ -39,8 +36,11 @@ class ImageProcessorActor : NeuralswarmActor() {
 //
 //        val data = processor.findTextRegions(ImageProcessor.NO_MERGE)
 //        val recognizer = TextRecognizer("netFile.nf")
+        val node = mapper.createObjectNode()
+        node.put("foo", 2.toDouble())
 
-        return ProcessedData(listOf(mapper.createObjectNode()))
+
+        return ProcessedData(listOf(node))
     }
 
     init {
