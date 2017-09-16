@@ -1,12 +1,12 @@
 package com.github.sshaddicts.neuralswarm.actor
 
-//import com.github.kittinunf.fuel.Fuel
-//import com.github.sshaddicts.lucrecium.imageProcessing.ImageProcessor
-//import com.github.sshaddicts.lucrecium.neuralNetwork.TextRecognizer
 import akka.actor.ActorRef
 import akka.actor.Props
 import akka.event.DiagnosticLoggingAdapter
 import akka.event.Logging
+import com.github.kittinunf.fuel.Fuel
+import com.github.sshaddicts.lucrecium.imageProcessing.ImageProcessor
+import com.github.sshaddicts.lucrecium.neuralNetwork.TextRecognizer
 import com.github.sshaddicts.neuralclient.data.ProcessImageRequest
 import com.github.sshaddicts.neuralclient.data.ProcessedData
 import com.github.sshaddicts.neuralswarm.actor.message.GetRouter
@@ -16,8 +16,10 @@ import com.github.sshaddicts.neuralswarm.actor.message.Save
 import com.github.sshaddicts.neuralswarm.entity.User
 import com.github.sshaddicts.neuralswarm.utils.akka.NeuralswarmActor
 import com.github.sshaddicts.neuralswarm.utils.akka.ask
-import com.github.sshaddicts.neuralswarm.utils.serialization.mapper
 import kotlinx.coroutines.experimental.*
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 
 
 class ImageProcessorActor : NeuralswarmActor() {
@@ -32,27 +34,23 @@ class ImageProcessorActor : NeuralswarmActor() {
 
     private fun getDataFromLucrecium(bytes: ByteArray, width: Int, height: Int): ProcessedData {
 
-//        val processor = ImageProcessor(bytes, width, height)
-//
-//        val data = processor.findTextRegions(ImageProcessor.NO_MERGE)
-//        val recognizer = TextRecognizer("netFile.nf")
-        val node = mapper.createObjectNode()
-        node.put("foo", 2.toDouble())
+        val processor = ImageProcessor(bytes, width, height)
 
+        val data = processor.findTextRegions(ImageProcessor.NO_MERGE)
+        val recognizer = TextRecognizer("/network")
 
-        return ProcessedData(listOf(node))
+        return ProcessedData(recognizer.getText(data))
     }
 
     init {
+
         log.debug("${javaClass.simpleName} created.")
 
-//        if(Files.exists(Paths.get("netFile.nf"))){
-//            Fuel.download("http://httpbin.org/bytes/32768").destination { response, url ->
-//                File.createTempFile("temp", ".tmp")
-//            }.response { req, res, result ->
-//
-//            }
-//        }
+        if(Files.exists(Paths.get("netFile.nf"))){
+            Fuel.download("http://httpbin.org/bytes/32768").destination { response, url ->
+                File.createTempFile("temp", ".tmp")
+            }.response { req, res, result -> }
+        }
     }
 
     override fun onReceive(message: Any?) {

@@ -2,4 +2,4 @@
 
 mvn clean install -T 1C
 docker build . -t neuralswarm
-docker-compose up
+docker-compose up --force-recreate
