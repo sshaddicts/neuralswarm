@@ -21,9 +21,21 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+            <id>bintray-sshaddicts-lucrecium</id>
+            <name>bintray</name>
+            <url>http://dl.bintray.com/sshaddicts/lucrecium</url>
+        </repository>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
             <id>central</id>
             <name>bintray</name>
             <url>http://jcenter.bintray.com</url>
+        </repository>
+        <repository>
+            <id>opencv</id>
+            <url>https://rawgit.com/sshaddicts/opencv/repository</url>
         </repository>
     </repositories>
 
@@ -37,9 +49,15 @@
 
     <dependencies>
         <dependency>
+            <groupId>sshaddicts.opencv</groupId>
+            <artifactId>opencv</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.sshaddicts</groupId>
             <artifactId>neuralswarm.client</artifactId>
-            <version>0.0.6</version>
+            <version>0.0.9</version>
         </dependency>
 
         <dependency>
@@ -161,6 +179,14 @@
             <groupId>de.heikoseeberger</groupId>
             <artifactId>akka-log4j_2.12</artifactId>
             <version>1.4.0</version>
+        </dependency>
+
+        <!-- lucrecium -->
+
+        <dependency>
+            <groupId>com.github.sshaddicts.lucrecium</groupId>
+            <artifactId>lucrecium-core</artifactId>
+            <version>0.0.7</version>
         </dependency>
 
     </dependencies>

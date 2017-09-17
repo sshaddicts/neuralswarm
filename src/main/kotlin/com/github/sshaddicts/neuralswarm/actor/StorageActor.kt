@@ -30,6 +30,14 @@ class StorageActor : NeuralswarmActor() {
         log.debug("${javaClass.simpleName} created.")
     }
 
+    override fun postStop() {
+        log.debug("Storage actor is DOWN.")
+    }
+
+    override fun preStart() {
+        log.debug("Storage actor is going up...")
+    }
+
     override fun onReceive(message: Any?) = when (message) {
 
         is HistoryRequest -> {

@@ -15,3 +15,5 @@ services:
 
   neuralswarm:
     image: neuralswarm:latest
+    ports:
+      - "8000:8000"

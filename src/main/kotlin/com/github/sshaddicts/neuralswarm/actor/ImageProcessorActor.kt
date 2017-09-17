@@ -4,6 +4,8 @@ import akka.actor.ActorRef
 import akka.actor.Props
 import akka.event.DiagnosticLoggingAdapter
 import akka.event.Logging
+import com.github.sshaddicts.lucrecium.imageProcessing.ImageProcessor
+import com.github.sshaddicts.lucrecium.neuralNetwork.TextRecognizer
 import com.github.sshaddicts.neuralclient.data.ProcessImageRequest
 import com.github.sshaddicts.neuralclient.data.ProcessedData
 import com.github.sshaddicts.neuralswarm.actor.message.GetRouter
@@ -15,11 +17,17 @@ import com.github.sshaddicts.neuralswarm.utils.akka.NeuralswarmActor
 import com.github.sshaddicts.neuralswarm.utils.akka.ask
 import com.github.sshaddicts.neuralswarm.utils.serialization.mapper
 import kotlinx.coroutines.experimental.*
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.InputStream
+import java.util.*
 
 
 class ImageProcessorActor : NeuralswarmActor() {
 
     private val log: DiagnosticLoggingAdapter = Logging.getLogger(this)
+
+    private val netowrk: InputStream
 
     private val router: Deferred<ActorRef> by lazy {
         async(CommonPool) {
@@ -27,17 +35,38 @@ class ImageProcessorActor : NeuralswarmActor() {
         }
     }
 
-    private fun getDataFromLucrecium(bytes: ByteArray): ProcessedData {
-        val node = mapper.createObjectNode()
-
-        node.put("name", "суміш ароматична \"Сметана та зелень\"")
-        node.put("price", 15.99)
-
-        return ProcessedData(listOf(node))
+    init {
+        netowrk = ByteArrayInputStream(File("/network").readBytes())
+        netowrk.reset()
     }
 
-    init {
-        log.debug("${javaClass.simpleName} created.")
+    private fun getDataFromLucrecium(bytes: ByteArray, width: Int, height: Int): ProcessedData {
+
+        val processor = ImageProcessor(bytes, width, height)
+        val data = processor.findTextRegions(ImageProcessor.NO_MERGE)
+
+        try {
+            val recognizer = TextRecognizer(netowrk)
+            val response = recognizer.getText(data)
+
+            val node = mapper.createObjectNode()
+
+            val overlay = processor.overlay
+
+            node.put(
+                    "entry",
+                    Base64.getMimeEncoder().encodeToString(ImageProcessor.toByteArray(overlay))
+            )
+
+            node.put("x", overlay.width())
+            node.put("y", overlay.height())
+
+            response.add(node)
+
+            return ProcessedData(response)
+        } finally {
+            netowrk.reset()
+        }
     }
 
     override fun onReceive(message: Any?) {
@@ -53,17 +82,27 @@ class ImageProcessorActor : NeuralswarmActor() {
 
                 sender tell if (user != null) {
 
-                    val data = getDataFromLucrecium(message.bytes)
+                    val data = try {
+                        getDataFromLucrecium(message.bytes, message.details.width, message.details.height)
+                    } catch (e: Throwable) {
+                        log.error(e, e.message)
+                    }
 
-                    user.history.add(data)
+                    if (data is ProcessedData) {
 
-                    storage tell Save(user)
+                        user.history.add(data)
 
-                    log.debug("Processed and saved data for user ${user.name}")
+                        storage tell Save(user)
 
-                    data
+                        log.debug("Processed and saved data for user ${user.name}")
+
+                        data
+                    } else {
+                        log.error("Failed to process and save data for user ${user.name}")
+                    }
+
                 } else {
-                    log.error("Failed to process and save data for user ${user?.name}")
+                    log.error("No user found: ${user?.name}")
                 }
 
             }
