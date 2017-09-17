@@ -12,8 +12,6 @@ import java.util.logging.Logger
 fun main(argv: Array<String>) {
     System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
-    println(System.getProperty("java.library.path"))
-
     val mongoLogger = Logger.getLogger("com.mongodb")
     mongoLogger.level = Level.SEVERE
 

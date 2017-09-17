@@ -4,7 +4,6 @@ import akka.actor.ActorRef
 import akka.actor.Props
 import akka.event.DiagnosticLoggingAdapter
 import akka.event.Logging
-import com.github.kittinunf.fuel.Fuel
 import com.github.sshaddicts.lucrecium.imageProcessing.ImageProcessor
 import com.github.sshaddicts.lucrecium.neuralNetwork.TextRecognizer
 import com.github.sshaddicts.neuralclient.data.ProcessImageRequest
@@ -17,14 +16,16 @@ import com.github.sshaddicts.neuralswarm.entity.User
 import com.github.sshaddicts.neuralswarm.utils.akka.NeuralswarmActor
 import com.github.sshaddicts.neuralswarm.utils.akka.ask
 import kotlinx.coroutines.experimental.*
+import java.io.ByteArrayInputStream
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.io.InputStream
 
 
 class ImageProcessorActor : NeuralswarmActor() {
 
     private val log: DiagnosticLoggingAdapter = Logging.getLogger(this)
+
+    private val netowrk: InputStream
 
     private val router: Deferred<ActorRef> by lazy {
         async(CommonPool) {
@@ -32,24 +33,21 @@ class ImageProcessorActor : NeuralswarmActor() {
         }
     }
 
+    init {
+        netowrk = ByteArrayInputStream(File("/network").readBytes())
+        netowrk.reset()
+    }
+
     private fun getDataFromLucrecium(bytes: ByteArray, width: Int, height: Int): ProcessedData {
 
         val processor = ImageProcessor(bytes, width, height)
-
         val data = processor.findTextRegions(ImageProcessor.NO_MERGE)
-        val recognizer = TextRecognizer("/network")
 
-        return ProcessedData(recognizer.getText(data))
-    }
-
-    init {
-
-        log.debug("${javaClass.simpleName} created.")
-
-        if(Files.exists(Paths.get("netFile.nf"))){
-            Fuel.download("http://httpbin.org/bytes/32768").destination { response, url ->
-                File.createTempFile("temp", ".tmp")
-            }.response { req, res, result -> }
+        try {
+            val recognizer = TextRecognizer(netowrk)
+            return ProcessedData(recognizer.getText(data))
+        } finally {
+            netowrk.reset()
         }
     }
 
@@ -66,17 +64,27 @@ class ImageProcessorActor : NeuralswarmActor() {
 
                 sender tell if (user != null) {
 
-                    val data = getDataFromLucrecium(message.bytes, message.details.width, message.details.height)
+                    val data = try {
+                        getDataFromLucrecium(message.bytes, message.details.width, message.details.height)
+                    } catch (e: Throwable) {
+                        log.error(e, e.message)
+                    }
 
-                    user.history.add(data)
+                    if (data is ProcessedData) {
 
-                    storage tell Save(user)
+                        user.history.add(data)
 
-                    log.debug("Processed and saved data for user ${user.name}")
+                        storage tell Save(user)
 
-                    data
+                        log.debug("Processed and saved data for user ${user.name}")
+
+                        data
+                    } else {
+                        log.error("Failed to process and save data for user ${user.name}")
+                    }
+
                 } else {
-                    log.error("Failed to process and save data for user ${user?.name}")
+                    log.error("No user found: ${user?.name}")
                 }
 
             }
