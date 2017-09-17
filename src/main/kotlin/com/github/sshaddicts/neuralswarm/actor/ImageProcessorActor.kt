@@ -15,10 +15,12 @@ import com.github.sshaddicts.neuralswarm.actor.message.Save
 import com.github.sshaddicts.neuralswarm.entity.User
 import com.github.sshaddicts.neuralswarm.utils.akka.NeuralswarmActor
 import com.github.sshaddicts.neuralswarm.utils.akka.ask
+import com.github.sshaddicts.neuralswarm.utils.serialization.mapper
 import kotlinx.coroutines.experimental.*
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
+import java.util.*
 
 
 class ImageProcessorActor : NeuralswarmActor() {
@@ -45,7 +47,23 @@ class ImageProcessorActor : NeuralswarmActor() {
 
         try {
             val recognizer = TextRecognizer(netowrk)
-            return ProcessedData(recognizer.getText(data))
+            val response = recognizer.getText(data)
+
+            val node = mapper.createObjectNode()
+
+            val overlay = processor.overlay
+
+            node.put(
+                    "entry",
+                    Base64.getMimeEncoder().encodeToString(ImageProcessor.toByteArray(overlay))
+            )
+
+            node.put("x", overlay.width())
+            node.put("y", overlay.height())
+
+            response.add(node)
+
+            return ProcessedData(response)
         } finally {
             netowrk.reset()
         }
