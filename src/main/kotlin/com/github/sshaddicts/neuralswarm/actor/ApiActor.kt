@@ -5,10 +5,7 @@ import akka.actor.Props
 import akka.event.DiagnosticLoggingAdapter
 import akka.event.Logging
 import com.fasterxml.jackson.module.kotlin.treeToValue
-import com.github.sshaddicts.neuralclient.data.AuthenticationRequest
-import com.github.sshaddicts.neuralclient.data.HistoryRequest
-import com.github.sshaddicts.neuralclient.data.ProcessImageRequest
-import com.github.sshaddicts.neuralclient.data.RegistrationRequest
+import com.github.sshaddicts.neuralclient.data.*
 import com.github.sshaddicts.neuralswarm.actor.abstract.WampActor
 import com.github.sshaddicts.neuralswarm.actor.message.GetProcessor
 import com.github.sshaddicts.neuralswarm.actor.message.GetRouter
@@ -16,6 +13,7 @@ import com.github.sshaddicts.neuralswarm.actor.message.GetStorage
 import com.github.sshaddicts.neuralswarm.utils.akka.ask
 import com.github.sshaddicts.neuralswarm.utils.serialization.mapper
 import kotlinx.coroutines.experimental.*
+import org.apache.commons.net.util.Base64
 import ws.wamp.jawampa.ApplicationError
 import ws.wamp.jawampa.Request
 import ws.wamp.jawampa.WampClient
@@ -88,10 +86,14 @@ class ApiActor : WampActor("ws://crossbar:6668", "api") {
 
 
         log.debug("process image: sending reply.")
-        if (response is Unit) {
-            request.replyError(ApplicationError.INVALID_ARGUMENT, "failed to process image")
-        } else {
-            request.reply(mapper.createArrayNode(), mapper.valueToTree(response))
+
+        when (response) {
+            is Unit -> request.replyError(ApplicationError.INVALID_ARGUMENT, "failed to process image")
+            is Pair<*, *> -> request.reply(
+                    mapper.valueToTree(arrayOf(Base64.encodeBase64String(response.second as ByteArray))),
+                    mapper.valueToTree(response.first as ProcessedData)
+            )
+            else -> request.replyError(ApplicationError.TRANSPORT_CLOSED, "internal error")
         }
     }
 

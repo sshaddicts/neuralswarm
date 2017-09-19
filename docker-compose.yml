@@ -10,10 +10,14 @@ services:
     image: mongo
     logging:
       driver: none
-    ports:
-      - "27017:27017"
 
   neuralswarm:
-    image: neuralswarm:latest
-    ports:
-      - "8000:8000"
+    build: .
+    depends_on:
+      - crossbar
+      - mongo
+  graylog:
+    image: gophernet/netcat
+    command: '-k -u -l -p 12201'
+    logging:
+      driver: none

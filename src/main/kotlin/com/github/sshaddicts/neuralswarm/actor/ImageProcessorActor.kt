@@ -15,19 +15,20 @@ import com.github.sshaddicts.neuralswarm.actor.message.Save
 import com.github.sshaddicts.neuralswarm.entity.User
 import com.github.sshaddicts.neuralswarm.utils.akka.NeuralswarmActor
 import com.github.sshaddicts.neuralswarm.utils.akka.ask
-import com.github.sshaddicts.neuralswarm.utils.serialization.mapper
 import kotlinx.coroutines.experimental.*
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
-import java.util.*
 
 
 class ImageProcessorActor : NeuralswarmActor() {
 
     private val log: DiagnosticLoggingAdapter = Logging.getLogger(this)
 
-    private val netowrk: InputStream
+    private val network: InputStream
+
+    private val processor = ImageProcessor()
+    private val recognizer: TextRecognizer
 
     private val router: Deferred<ActorRef> by lazy {
         async(CommonPool) {
@@ -36,37 +37,19 @@ class ImageProcessorActor : NeuralswarmActor() {
     }
 
     init {
-        netowrk = ByteArrayInputStream(File("/network").readBytes())
-        netowrk.reset()
+        network = ByteArrayInputStream(File("/network").readBytes())
+        network.reset()
+
+        recognizer = TextRecognizer(network)
+        network.reset()
     }
 
-    private fun getDataFromLucrecium(bytes: ByteArray, width: Int, height: Int): ProcessedData {
+    private fun processData(bytes: ByteArray): Pair<ProcessedData, ByteArray> {
 
-        val processor = ImageProcessor(bytes, width, height)
-        val data = processor.findTextRegions(ImageProcessor.NO_MERGE)
+        val data = processor.findTextRegions(bytes)
+        val response = recognizer.recognize(data.chars)
 
-        try {
-            val recognizer = TextRecognizer(netowrk)
-            val response = recognizer.getText(data)
-
-            val node = mapper.createObjectNode()
-
-            val overlay = processor.overlay
-
-            node.put(
-                    "entry",
-                    Base64.getMimeEncoder().encodeToString(ImageProcessor.toByteArray(overlay))
-            )
-
-            node.put("x", overlay.width())
-            node.put("y", overlay.height())
-
-            response.add(node)
-
-            return ProcessedData(response)
-        } finally {
-            netowrk.reset()
-        }
+        return Pair(ProcessedData(response), data.overlay)
     }
 
     override fun onReceive(message: Any?) {
@@ -76,35 +59,50 @@ class ImageProcessorActor : NeuralswarmActor() {
         when (message) {
             is ProcessImageRequest -> launch(context.dispatcher().asCoroutineDispatcher()) {
 
-                val storage = router.await().ask(GetStorage()) as ActorRef
-
-                val user = storage.ask(GetUserIfExists(message.token)) as User?
-
-                sender tell if (user != null) {
-
-                    val data = try {
-                        getDataFromLucrecium(message.bytes, message.details.width, message.details.height)
+                if (message.isAnonymous) {
+                    val pair = try {
+                        processData(message.bytes)
                     } catch (e: Throwable) {
                         log.error(e, e.message)
                     }
 
-                    if (data is ProcessedData) {
+                    sender tell if (pair is Pair<*, *>) {
+                        log.debug("Processed and saved data for anonymous user.")
 
-                        user.history.add(data)
-
-                        storage tell Save(user)
-
-                        log.debug("Processed and saved data for user ${user.name}")
-
-                        data
+                        pair
                     } else {
-                        log.error("Failed to process and save data for user ${user.name}")
+                        log.error("Failed to process and save data for anonymous user.")
                     }
 
                 } else {
-                    log.error("No user found: ${user?.name}")
-                }
+                    val storage = router.await().ask(GetStorage()) as ActorRef
 
+                    val user = storage.ask(GetUserIfExists(message.token)) as User?
+
+                    sender tell if (user != null) {
+
+                        val pair = try {
+                            processData(message.bytes)
+                        } catch (e: Throwable) {
+                            log.error(e, e.message)
+                        }
+
+                        if (pair is Pair<*, *>) {
+
+                            user.history.add(pair.first as ProcessedData)
+
+                            storage tell Save(user)
+
+                            log.debug("Processed and saved data for user ${user.name}")
+
+                            pair
+                        } else {
+                            log.error("Failed to process and save data for user ${user.name}")
+                        }
+                    } else {
+                        log.error("No user found: ${user?.name}")
+                    }
+                }
             }
         }
     }

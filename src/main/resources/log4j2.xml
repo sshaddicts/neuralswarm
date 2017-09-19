@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<Configuration>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="[%d{HH:mm:ss.SSS}] [%X{akkaSource}] %-5level - %msg%n"/>
         </Console>
+        <Gelf name="gelf" host="udp:graylog" port="12201" version="1.1" extractStackTrace="true"
+              filterStackTrace="true" mdcProfiling="true" includeFullMdc="true" maximumMessageSize="8192"
+              originHost="%host{fqdn}">
+            <Field name="timestamp" pattern="%d{dd MMM yyyy HH:mm:ss,SSS}"/>
+            <Field name="level" pattern="%level"/>
+            <Field name="simpleClassName" pattern="%C{1}"/>
+            <Field name="className" pattern="%C"/>
+            <Field name="server" pattern="%host"/>
+            <Field name="server.fqdn" pattern="%host{fqdn}"/>
+        </Gelf>
     </Appenders>
     <Loggers>
-        <Root level="debug">
+        <Root level="DEBUG">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="gelf"/>
         </Root>
     </Loggers>
 </Configuration>
