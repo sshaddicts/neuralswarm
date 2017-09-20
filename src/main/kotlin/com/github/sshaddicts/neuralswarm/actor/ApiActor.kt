@@ -7,9 +7,7 @@ import akka.event.Logging
 import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.github.sshaddicts.neuralclient.data.*
 import com.github.sshaddicts.neuralswarm.actor.abstract.WampActor
-import com.github.sshaddicts.neuralswarm.actor.message.GetProcessor
 import com.github.sshaddicts.neuralswarm.actor.message.GetRouter
-import com.github.sshaddicts.neuralswarm.actor.message.GetStorage
 import com.github.sshaddicts.neuralswarm.utils.akka.ask
 import com.github.sshaddicts.neuralswarm.utils.serialization.mapper
 import kotlinx.coroutines.experimental.*
@@ -19,6 +17,7 @@ import ws.wamp.jawampa.Request
 import ws.wamp.jawampa.WampClient
 
 class ApiActor : WampActor("ws://crossbar:6668", "api") {
+    override fun createReceive(): Receive = receiveBuilder().build()
 
     private val errorHandler: (Throwable) -> Unit = { log.error(it, it.message) }
 
@@ -56,8 +55,7 @@ class ApiActor : WampActor("ws://crossbar:6668", "api") {
     }
 
     private fun getHistory(request: Request) = launch(context.dispatcher().asCoroutineDispatcher()) {
-        val storage = router.await().ask(GetStorage()) as ActorRef
-        val response = storage ask mapper.treeToValue<HistoryRequest>(request.keywordArguments())
+        val response = router.await() ask mapper.treeToValue<HistoryRequest>(request.keywordArguments())
 
         log.debug("get history: sending reply.")
 
@@ -69,8 +67,7 @@ class ApiActor : WampActor("ws://crossbar:6668", "api") {
     }
 
     private fun userRegister(request: Request) = launch(context.dispatcher().asCoroutineDispatcher()) {
-        val storage = router.await().ask(GetStorage()) as ActorRef
-        val response = storage ask mapper.treeToValue<RegistrationRequest>(request.keywordArguments())
+        val response = router.await() ask mapper.treeToValue<RegistrationRequest>(request.keywordArguments())
 
         log.debug("registration: sending reply.")
         if (response is Unit) {
@@ -81,9 +78,7 @@ class ApiActor : WampActor("ws://crossbar:6668", "api") {
     }
 
     private fun processImage(request: Request) = launch(context.dispatcher().asCoroutineDispatcher()) {
-        val processor = router.await().ask(GetProcessor()) as ActorRef
-        val response = processor ask mapper.treeToValue<ProcessImageRequest>(request.keywordArguments())
-
+        val response = router.await() ask mapper.treeToValue<ProcessImageRequest>(request.keywordArguments())
 
         log.debug("process image: sending reply.")
 
@@ -98,8 +93,7 @@ class ApiActor : WampActor("ws://crossbar:6668", "api") {
     }
 
     private fun userAuth(request: Request) = launch(context.dispatcher().asCoroutineDispatcher()) {
-        val storage = router.await().ask(GetStorage()) as ActorRef
-        val response = storage ask mapper.treeToValue<AuthenticationRequest>(request.keywordArguments())
+        val response = router.await() ask mapper.treeToValue<AuthenticationRequest>(request.keywordArguments())
 
         log.debug("auth: sending reply.")
         if (response is Unit) {
@@ -107,10 +101,6 @@ class ApiActor : WampActor("ws://crossbar:6668", "api") {
         } else {
             request.reply(response)
         }
-    }
-
-    override fun onReceive(message: Any?) {
-
     }
 
     companion object {

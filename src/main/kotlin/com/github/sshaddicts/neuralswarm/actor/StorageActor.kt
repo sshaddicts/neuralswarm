@@ -3,6 +3,10 @@ package com.github.sshaddicts.neuralswarm.actor
 import akka.actor.Props
 import akka.event.DiagnosticLoggingAdapter
 import akka.event.Logging
+import com.github.sshaddicts.neuralclient.data.AuthenticationRequest
+import com.github.sshaddicts.neuralclient.data.History
+import com.github.sshaddicts.neuralclient.data.HistoryRequest
+import com.github.sshaddicts.neuralclient.data.RegistrationRequest
 import com.github.sshaddicts.neuralswarm.actor.message.GetUserIfExists
 import com.github.sshaddicts.neuralswarm.actor.message.Save
 import com.github.sshaddicts.neuralswarm.entity.Token
@@ -10,10 +14,6 @@ import com.github.sshaddicts.neuralswarm.entity.User
 import com.github.sshaddicts.neuralswarm.utils.akka.NeuralswarmActor
 import com.github.sshaddicts.neuralswarm.utils.token.generateHash
 import com.github.sshaddicts.neuralswarm.utils.token.validatePassword
-import com.github.sshaddicts.neuralclient.data.AuthenticationRequest
-import com.github.sshaddicts.neuralclient.data.History
-import com.github.sshaddicts.neuralclient.data.HistoryRequest
-import com.github.sshaddicts.neuralclient.data.RegistrationRequest
 import com.mongodb.client.MongoCollection
 import org.litote.kmongo.*
 import java.util.*
@@ -30,91 +30,74 @@ class StorageActor : NeuralswarmActor() {
         log.debug("${javaClass.simpleName} created.")
     }
 
-    override fun postStop() {
-        log.debug("Storage actor is DOWN.")
-    }
+    override fun createReceive(): Receive = receiveBuilder()
+            .match(HistoryRequest::class.java, { message ->
+                sender tell try {
 
-    override fun preStart() {
-        log.debug("Storage actor is going up...")
-    }
+                    History(collection.findOne(Token.load(message.token)).history)
 
-    override fun onReceive(message: Any?) = when (message) {
+                } catch (e: Throwable) {
+                    log.error(e.message)
+                }
+            })
 
-        is HistoryRequest -> {
-            sender tell try {
+            .match(GetUserIfExists::class.java, { message ->
+                sender tell try {
 
-                History(collection.findOne(Token.load(message.token)).history)
+                    collection.findOne(message.token)
 
-            } catch (e: Throwable) {
-                log.error(e.message)
-            }
-        }
+                } catch (e: Throwable) {
+                    log.error(e.message)
+                }
+            })
 
-        is GetUserIfExists -> {
+            .match(Save::class.java, { message ->
+                log.debug("Saving user: ${message.user.name}")
+                collection.save(message.user)
+            })
 
-            sender tell try {
+            .match(AuthenticationRequest::class.java, { (username, password) ->
+                val user = collection.findOne("{name: '$username'}")
 
-                collection.findOne(message.token)
+                sender tell if (user != null && user.validatePassword(password)) {
 
-            } catch (e: Throwable) {
-                log.error(e.message)
-            }
-        }
+                    log.debug("User: $username - successful authentication.")
 
-        is Save -> {
+                    user.token.toString()
+                } else {
 
-            log.debug("Saving user: ${message.user.name}")
-            collection.save(message.user)
+                    log.debug("User: $username - authentication failed.")
 
-        }
+                    Unit
+                }
+            })
 
-        is AuthenticationRequest -> {
+            .match(RegistrationRequest::class.java, { (username, password) ->
+                val notExists = collection.count("{name: '$username'}") == 0.toLong()
 
-            val user = collection.findOne("{name: '${message.username}'}")
+                sender tell if (notExists) {
+                    val date = Date()
 
-            sender tell if (user != null && user.validatePassword(message.password)) {
+                    val user = User(
+                            name = username,
+                            hash = generateHash(password, date),
+                            registrationDate = date
+                    )
 
-                log.debug("User: ${message.username} - successful authentication.")
+                    collection.insertOne(user)
 
-                user.token.toString()
-            } else {
+                    log.debug("User: $username - successful registration.")
+                    log.debug("User: $username now have a token: ${user.token}")
 
-                log.debug("User: ${message.username} - authentication failed.")
+                    user.token.toString()
+                } else {
+                    log.debug("User: $username - registration failed.")
 
-                Unit
-            }
+                    Unit
+                }
+            })
 
-        }
-
-        is RegistrationRequest -> {
-
-            val notExists = collection.count("{name: '${message.username}'}") == 0.toLong()
-
-            sender tell if (notExists) {
-                val date = Date()
-
-                val user = User(
-                        name = message.username,
-                        hash = generateHash(message.password, date),
-                        registrationDate = date
-                )
-
-                collection.insertOne(user)
-
-                log.debug("User: ${message.username} - successful registration.")
-                log.debug("User: ${message.username} now have a token: ${user.token}")
-
-                user.token.toString()
-            } else {
-                log.debug("User: ${message.username} - registration failed.")
-
-                Unit
-            }
-
-        }
-
-        else -> log.error("invalid message: $message")
-    }
+            .build()
 
     private fun MongoCollection<User>.findOne(token: Token): User {
         val user = this.findOneById(token.userId) ?: throw RuntimeException("No user with id ${token.userId} found.")

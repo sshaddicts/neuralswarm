@@ -4,44 +4,26 @@ import akka.actor.ActorRef
 import akka.actor.Props
 import akka.event.DiagnosticLoggingAdapter
 import akka.event.Logging
-import com.github.sshaddicts.lucrecium.imageProcessing.ImageProcessor
-import com.github.sshaddicts.lucrecium.neuralNetwork.TextRecognizer
 import com.github.sshaddicts.neuralclient.data.ProcessImageRequest
 import com.github.sshaddicts.neuralclient.data.ProcessedData
 import com.github.sshaddicts.neuralswarm.actor.message.GetRouter
-import com.github.sshaddicts.neuralswarm.actor.message.GetStorage
 import com.github.sshaddicts.neuralswarm.actor.message.GetUserIfExists
 import com.github.sshaddicts.neuralswarm.actor.message.Save
 import com.github.sshaddicts.neuralswarm.entity.User
 import com.github.sshaddicts.neuralswarm.utils.akka.NeuralswarmActor
 import com.github.sshaddicts.neuralswarm.utils.akka.ask
+import com.github.sshaddicts.neuralswarm.utils.neural.processor
+import com.github.sshaddicts.neuralswarm.utils.neural.recognizer
 import kotlinx.coroutines.experimental.*
-import java.io.ByteArrayInputStream
-import java.io.File
-import java.io.InputStream
-
 
 class ImageProcessorActor : NeuralswarmActor() {
 
     private val log: DiagnosticLoggingAdapter = Logging.getLogger(this)
 
-    private val network: InputStream
-
-    private val processor = ImageProcessor()
-    private val recognizer: TextRecognizer
-
     private val router: Deferred<ActorRef> by lazy {
         async(CommonPool) {
             context().parent().ask(GetRouter()) as ActorRef
         }
-    }
-
-    init {
-        network = ByteArrayInputStream(File("/network").readBytes())
-        network.reset()
-
-        recognizer = TextRecognizer(network)
-        network.reset()
     }
 
     private fun processData(bytes: ByteArray): Pair<ProcessedData, ByteArray> {
@@ -52,57 +34,62 @@ class ImageProcessorActor : NeuralswarmActor() {
         return Pair(ProcessedData(response), data.overlay)
     }
 
-    override fun onReceive(message: Any?) {
+    override fun preStart() {
+        log.debug("${javaClass.simpleName} starting.")
+    }
 
-        val sender = context.sender()
+    override fun createReceive(): Receive = receiveBuilder()
 
-        when (message) {
-            is ProcessImageRequest -> launch(context.dispatcher().asCoroutineDispatcher()) {
+            .match(ProcessImageRequest::class.java, {
+                log.debug("handling process image request...")
+                handleRequest(it, sender)
+            })
 
-                if (message.isAnonymous) {
-                    val pair = try {
-                        processData(message.bytes)
-                    } catch (e: Throwable) {
-                        log.error(e, e.message)
-                    }
+            .build()
 
-                    sender tell if (pair is Pair<*, *>) {
-                        log.debug("Processed and saved data for anonymous user.")
+    private fun handleRequest(message: ProcessImageRequest, sender: ActorRef) = launch(context.dispatcher().asCoroutineDispatcher()) {
 
-                        pair
-                    } else {
-                        log.error("Failed to process and save data for anonymous user.")
-                    }
+        if (message.isAnonymous) {
+            val pair = try {
+                processData(message.bytes)
+            } catch (e: Throwable) {
+                log.error(e, e.message)
+            }
 
-                } else {
-                    val storage = router.await().ask(GetStorage()) as ActorRef
+            sender tell if (pair is Pair<*, *>) {
+                log.debug("Processed and saved data for anonymous user.")
 
-                    val user = storage.ask(GetUserIfExists(message.token)) as User?
+                pair
+            } else {
+                log.error("Failed to process and save data for anonymous user.")
+            }
 
-                    sender tell if (user != null) {
+        } else {
 
-                        val pair = try {
-                            processData(message.bytes)
-                        } catch (e: Throwable) {
-                            log.error(e, e.message)
-                        }
+            val user = router.await().ask(GetUserIfExists(message.token)) as User?
 
-                        if (pair is Pair<*, *>) {
+            sender tell if (user != null) {
 
-                            user.history.add(pair.first as ProcessedData)
-
-                            storage tell Save(user)
-
-                            log.debug("Processed and saved data for user ${user.name}")
-
-                            pair
-                        } else {
-                            log.error("Failed to process and save data for user ${user.name}")
-                        }
-                    } else {
-                        log.error("No user found: ${user?.name}")
-                    }
+                val pair = try {
+                    processData(message.bytes)
+                } catch (e: Throwable) {
+                    log.error(e, e.message)
                 }
+
+                if (pair is Pair<*, *>) {
+
+                    user.history.add(pair.first as ProcessedData)
+
+                    router.await() tell Save(user)
+
+                    log.debug("Processed and saved data for user ${user.name}")
+
+                    pair
+                } else {
+                    log.error("Failed to process and save data for user ${user.name}")
+                }
+            } else {
+                log.error("No user found: ${user?.name}")
             }
         }
     }

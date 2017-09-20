@@ -1,8 +1,8 @@
 package com.github.sshaddicts.neuralswarm.utils.akka
 
+import akka.actor.AbstractActor
 import akka.actor.ActorRef
-import akka.actor.UntypedActor
 
-abstract class NeuralswarmActor : UntypedActor() {
+abstract class NeuralswarmActor : AbstractActor() {
     protected infix fun ActorRef.tell(message: Any?) = this.tell(message, self)
 }
