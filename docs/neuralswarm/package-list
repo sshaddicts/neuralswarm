@@ -1,0 +1,12 @@
+$dokka.format:html
+$dokka.linkExtension:html
+$dokka.location:com.github.sshaddicts.neuralswarm.utils.akka$ask(akka.actor.ActorRef, kotlin.Any)com.github.sshaddicts.neuralswarm.utils.akka/akka.actor.-actor-ref/ask.html
+com.github.sshaddicts.neuralswarm
+com.github.sshaddicts.neuralswarm.actor
+com.github.sshaddicts.neuralswarm.actor.abstract
+com.github.sshaddicts.neuralswarm.actor.message
+com.github.sshaddicts.neuralswarm.entity
+com.github.sshaddicts.neuralswarm.utils.akka
+com.github.sshaddicts.neuralswarm.utils.neural
+com.github.sshaddicts.neuralswarm.utils.serialization
+com.github.sshaddicts.neuralswarm.utils.token

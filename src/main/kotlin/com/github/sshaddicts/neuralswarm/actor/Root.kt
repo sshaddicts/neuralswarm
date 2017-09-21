@@ -8,6 +8,9 @@ import akka.event.LoggingAdapter
 import com.github.sshaddicts.neuralswarm.actor.message.GetRouter
 import com.github.sshaddicts.neuralswarm.utils.akka.NeuralswarmActor
 
+/**
+ * Root actor of [ActorSystem]
+ */
 class Root : NeuralswarmActor() {
     override fun createReceive(): Receive = receiveBuilder()
             .match(GetRouter::class.java, {
