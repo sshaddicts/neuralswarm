@@ -18,6 +18,15 @@ import com.mongodb.client.MongoCollection
 import org.litote.kmongo.*
 import java.util.*
 
+/**
+ * Actor that communicate with data storage.
+ *
+ * @see HistoryRequest
+ * @see GetUserIfExists
+ * @see Save
+ * @see AuthenticationRequest
+ * @see RegistrationRequest
+ */
 class StorageActor : NeuralswarmActor() {
 
     private val log: DiagnosticLoggingAdapter = Logging.getLogger(this)

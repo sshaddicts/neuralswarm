@@ -1,0 +1,87 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>NeuralswarmActor - neuralswarm</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">neuralswarm</a>&nbsp;/&nbsp;<a href="../index.html">com.github.sshaddicts.neuralswarm.utils.akka</a>&nbsp;/&nbsp;<a href=".">NeuralswarmActor</a><br/>
+<br/>
+<h1>NeuralswarmActor</h1>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">NeuralswarmActor</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">AbstractActor</span></code> <a href="https://github.com/sshaddicts/neuralswarm/tree/master/src/main/kotlin/com/github/sshaddicts/neuralswarm/utils/akka/tell.kt#L6">(source)</a>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">NeuralswarmActor</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="tell.html">tell</a></p>
+</td>
+<td>
+<code><span class="keyword">infix</span> <span class="keyword">fun </span><span class="identifier">ActorRef</span><span class="symbol">.</span><span class="identifier">tell</span><span class="symbol">(</span><span class="identifier" id="com.github.sshaddicts.neuralswarm.utils.akka.NeuralswarmActor$tell(akka.actor.ActorRef, kotlin.Any)/message">message</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.github.sshaddicts.neuralswarm.actor/-image-processor-actor/index.html">ImageProcessorActor</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ImageProcessorActor</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">NeuralswarmActor</span></code>
+<p>Actor that used for processing images.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.github.sshaddicts.neuralswarm.actor/-root/index.html">Root</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">Root</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">NeuralswarmActor</span></code>
+<p>Root actor of <a href="#">ActorSystem</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.github.sshaddicts.neuralswarm.actor/-router-actor/index.html">RouterActor</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">RouterActor</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">NeuralswarmActor</span></code>
+<p>Actor that used for load balancing and routing messages between all actors.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.github.sshaddicts.neuralswarm.actor/-storage-actor/index.html">StorageActor</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">StorageActor</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">NeuralswarmActor</span></code>
+<p>Actor that communicate with data storage.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../../com.github.sshaddicts.neuralswarm.actor.abstract/-wamp-actor/index.html">WampActor</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">WampActor</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">NeuralswarmActor</span></code>
+<p>Actor that contains <a href="http://www.atetric.com/atetric/javadoc/ws.wamp.jawampa/jawampa-core/0.5.0/ws/wamp/jawampa/WampClient.html">WampClient</a> and communicate with WAMP realm through it.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

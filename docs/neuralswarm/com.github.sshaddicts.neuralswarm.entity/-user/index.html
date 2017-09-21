@@ -1,0 +1,94 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>User - neuralswarm</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">neuralswarm</a>&nbsp;/&nbsp;<a href="../index.html">com.github.sshaddicts.neuralswarm.entity</a>&nbsp;/&nbsp;<a href=".">User</a><br/>
+<br/>
+<h1>User</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">User</span></code> <a href="https://github.com/sshaddicts/neuralswarm/tree/master/src/main/kotlin/com/github/sshaddicts/neuralswarm/entity/User.kt#L12">(source)</a>
+<p>Entity that represents user.</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">User</span><span class="symbol">(</span><span class="identifier" id="com.github.sshaddicts.neuralswarm.entity.User$<init>(kotlin.String, kotlin.String, kotlin.String, java.util.Date, kotlin.String, kotlin.collections.MutableList((com.github.sshaddicts.neuralclient.data.ProcessedData)))/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">, </span><span class="identifier" id="com.github.sshaddicts.neuralswarm.entity.User$<init>(kotlin.String, kotlin.String, kotlin.String, java.util.Date, kotlin.String, kotlin.collections.MutableList((com.github.sshaddicts.neuralclient.data.ProcessedData)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.github.sshaddicts.neuralswarm.entity.User$<init>(kotlin.String, kotlin.String, kotlin.String, java.util.Date, kotlin.String, kotlin.collections.MutableList((com.github.sshaddicts.neuralclient.data.ProcessedData)))/hash">hash</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.github.sshaddicts.neuralswarm.entity.User$<init>(kotlin.String, kotlin.String, kotlin.String, java.util.Date, kotlin.String, kotlin.collections.MutableList((com.github.sshaddicts.neuralclient.data.ProcessedData)))/registrationDate">registrationDate</span><span class="symbol">:</span>&nbsp;<a href="http://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">, </span><span class="identifier" id="com.github.sshaddicts.neuralswarm.entity.User$<init>(kotlin.String, kotlin.String, kotlin.String, java.util.Date, kotlin.String, kotlin.collections.MutableList((com.github.sshaddicts.neuralclient.data.ProcessedData)))/tokenId">tokenId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a>&nbsp;<span class="symbol">=</span>&nbsp;UUID.randomUUID().toString().replace("-", StringUtils.EMPTY)<span class="symbol">, </span><span class="identifier" id="com.github.sshaddicts.neuralswarm.entity.User$<init>(kotlin.String, kotlin.String, kotlin.String, java.util.Date, kotlin.String, kotlin.collections.MutableList((com.github.sshaddicts.neuralclient.data.ProcessedData)))/history">history</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="http://sshaddicts.ml/neuralswarm-client/neuralswarm.client/com.github.sshaddicts.neuralclient.data/-processed-data/index.html"><span class="identifier">ProcessedData</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;ArrayList()<span class="symbol">)</span></code>
+<p>Entity that represents user.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="hash.html">hash</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">hash</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="history.html">history</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">history</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="http://sshaddicts.ml/neuralswarm-client/neuralswarm.client/com.github.sshaddicts.neuralclient.data/-processed-data/index.html"><span class="identifier">ProcessedData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="id.html">id</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="name.html">name</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">name</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="registration-date.html">registrationDate</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">registrationDate</span><span class="symbol">: </span><a href="http://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="token.html">token</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">token</span><span class="symbol">: </span><a href="../-token/index.html"><span class="identifier">Token</span></a></code></td>
+</tr>
+<tr>
+<td>
+<p><a href="token-id.html">tokenId</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">tokenId</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Extension Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.github.sshaddicts.neuralswarm.utils.token/validate-password.html">validatePassword</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">User</span><span class="symbol">.</span><span class="identifier">validatePassword</span><span class="symbol">(</span><span class="identifier" id="com.github.sshaddicts.neuralswarm.utils.token$validatePassword(com.github.sshaddicts.neuralswarm.entity.User, kotlin.String)/password">password</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

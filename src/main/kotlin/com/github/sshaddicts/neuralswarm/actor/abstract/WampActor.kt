@@ -14,7 +14,9 @@ import ws.wamp.jawampa.transport.netty.NettyWampClientConnectorProvider
 import ws.wamp.jawampa.transport.netty.NettyWampConnectionConfig
 import java.util.concurrent.TimeUnit
 
-
+/**
+ * Actor that contains [WampClient] and communicate with WAMP realm through it.
+ */
 abstract class WampActor(uri: String, realm: String) : NeuralswarmActor() {
 
     abstract val log: DiagnosticLoggingAdapter

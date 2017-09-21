@@ -15,6 +15,10 @@ import com.github.sshaddicts.neuralswarm.actor.message.Save
 import com.github.sshaddicts.neuralswarm.utils.akka.NeuralswarmActor
 import com.github.sshaddicts.neuralswarm.utils.akka.config
 
+/**
+ * Actor that used for load balancing and routing messages between all actors.
+ */
+
 class RouterActor : NeuralswarmActor() {
 
     private val toStorage: (Any) -> Unit = { storage.tell(it, sender) }

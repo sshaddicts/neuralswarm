@@ -4,6 +4,9 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.sshaddicts.neuralswarm.utils.serialization.mapper
 import com.github.sshaddicts.neuralswarm.utils.token.Aes
 
+/**
+ * Custom JWT implementation with AES256
+ */
 data class Token(
         val userId: String,
         val tokenId: String

@@ -6,7 +6,9 @@ import org.apache.commons.lang3.StringUtils
 import org.litote.kmongo.MongoId
 import java.util.*
 
-
+/**
+ * Entity that represents user.
+ */
 data class User (
         @MongoId
         val id: String? = null,

@@ -16,6 +16,11 @@ import com.github.sshaddicts.neuralswarm.utils.neural.processor
 import com.github.sshaddicts.neuralswarm.utils.neural.recognizer
 import kotlinx.coroutines.experimental.*
 
+/**
+ * Actor that used for processing images.
+ *
+ * @see ProcessImageRequest
+ */
 class ImageProcessorActor : NeuralswarmActor() {
 
     private val log: DiagnosticLoggingAdapter = Logging.getLogger(this)
