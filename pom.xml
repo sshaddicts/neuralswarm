@@ -23,7 +23,7 @@
             </snapshots>
             <id>bintray-sshaddicts-lucrecium</id>
             <name>bintray</name>
-            <url>http://dl.bintray.com/sshaddicts/lucrecium</url>
+            <url>https://dl.bintray.com/sshaddicts/lucrecium</url>
         </repository>
         <repository>
             <snapshots>
@@ -205,7 +205,7 @@
         <dependency>
             <groupId>com.github.sshaddicts.lucrecium</groupId>
             <artifactId>lucrecium-core</artifactId>
-            <version>0.1.0</version>
+            <version>0.2.0</version>
         </dependency>
 
         <dependency>

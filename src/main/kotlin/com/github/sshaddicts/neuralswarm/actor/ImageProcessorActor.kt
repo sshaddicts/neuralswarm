@@ -34,7 +34,7 @@ class ImageProcessorActor : NeuralswarmActor() {
     private fun processData(bytes: ByteArray): Pair<ProcessedData, ByteArray> {
 
         val data = processor.findTextRegions(bytes)
-        val response = recognizer.recognize(data.chars)
+        val response = recognizer.recognize(data.chars,labels)
 
         return Pair(ProcessedData(response), data.overlay)
     }
@@ -102,5 +102,22 @@ class ImageProcessorActor : NeuralswarmActor() {
     companion object {
         val props: Props
             get() = Props.create(ImageProcessorActor::class.java)
+
+        val labels: List<String> = listOf(
+        "0","1","2","3","4","5",
+        "6","7","8","9","dot","slash",
+        "Є","І","Ї","А","Б","В",
+        "Г","Д","Е","Ж","З","И",
+        "Й","К","Л","М","Н","О",
+        "П","Р","С","Т","У","Ф",
+        "Х","Ц","Ч","Ш","Щ","Ь",
+        "Ю","Я",
+        "а","б","в","г","д","е",
+        "ж","з","и","й","к","л",
+        "м","н","о","п","р","с",
+        "т","у","ф","х","ц","ч",
+        "ш","щ","ь","э","ю","я",
+        "є","і","ї","ґ"
+        )
     }
 }
