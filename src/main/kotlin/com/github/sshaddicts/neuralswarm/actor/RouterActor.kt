@@ -62,7 +62,7 @@ class RouterActor : NeuralswarmActor() {
 
         storage = context.actorOf(RoundRobinPool(storageActors).props(StorageActor.props))
 
-        log.debug("all actors was created.")
+        log.debug("all actors ware created.")
 
         context.watch(api)
         context.watch(processor)

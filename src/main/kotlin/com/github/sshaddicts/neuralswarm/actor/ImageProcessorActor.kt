@@ -4,6 +4,7 @@ import akka.actor.ActorRef
 import akka.actor.Props
 import akka.event.DiagnosticLoggingAdapter
 import akka.event.Logging
+import com.github.sshaddicts.lucrecium.imageProcessing.ImageProcessor
 import com.github.sshaddicts.neuralclient.data.ProcessImageRequest
 import com.github.sshaddicts.neuralclient.data.ProcessedData
 import com.github.sshaddicts.neuralswarm.actor.message.GetRouter
@@ -15,6 +16,8 @@ import com.github.sshaddicts.neuralswarm.utils.akka.ask
 import com.github.sshaddicts.neuralswarm.utils.neural.processor
 import com.github.sshaddicts.neuralswarm.utils.neural.recognizer
 import kotlinx.coroutines.experimental.*
+import org.opencv.imgcodecs.Imgcodecs
+import org.opencv.imgproc.Imgproc
 
 /**
  * Actor that used for processing images.
@@ -33,8 +36,15 @@ class ImageProcessorActor : NeuralswarmActor() {
 
     private fun processData(bytes: ByteArray): Pair<ProcessedData, ByteArray> {
 
-        val data = processor.findTextRegions(bytes)
+        val image = ImageProcessor.loadImage(bytes, Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE)
+
+        val data = processor.findTextRegions(image, ImageProcessor.NO_MERGE, true)
+
+        log.debug("found ${data.chars.size} elements")
+
         val response = recognizer.recognize(data.chars,labels)
+
+        log.debug("response has ${response.size} entries")
 
         return Pair(ProcessedData(response), data.overlay)
     }
