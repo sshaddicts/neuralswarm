@@ -16,8 +16,8 @@ import com.github.sshaddicts.neuralswarm.utils.akka.ask
 import com.github.sshaddicts.neuralswarm.utils.neural.processor
 import com.github.sshaddicts.neuralswarm.utils.neural.recognizer
 import kotlinx.coroutines.experimental.*
-import org.opencv.imgcodecs.Imgcodecs
-import org.opencv.imgproc.Imgproc
+import java.io.File
+import java.util.*
 
 /**
  * Actor that used for processing images.
@@ -36,17 +36,26 @@ class ImageProcessorActor : NeuralswarmActor() {
 
     private fun processData(bytes: ByteArray): Pair<ProcessedData, ByteArray> {
 
-        val image = ImageProcessor.loadImage(bytes, Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE)
+        val file = File("/varimg/${UUID.randomUUID().toString().replace("-", "")}")
 
-        val data = processor.findTextRegions(image, ImageProcessor.NO_MERGE, true)
+        file.writeBytes(bytes)
 
-        log.debug("found ${data.chars.size} elements")
+        log.debug("created temporary file: ${file.absolutePath}")
 
-        val response = recognizer.recognize(data.chars,labels)
+        try {
+            val data = processor.findTextRegions(file.absolutePath, ImageProcessor.NO_MERGE, true)
 
-        log.debug("response has ${response.size} entries")
+            log.debug("found ${data.chars.size} elements")
 
-        return Pair(ProcessedData(response), data.overlay)
+            val response = recognizer.recognize(data.chars, labels)
+
+            log.debug("response has ${response.size} entries")
+
+            return Pair(ProcessedData(response), data.overlay)
+        } finally {
+            file.delete()
+            log.debug("deleted temporary file: ${file.absolutePath}")
+        }
     }
 
     override fun preStart() {
