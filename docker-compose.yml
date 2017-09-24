@@ -16,6 +16,8 @@ services:
     depends_on:
       - crossbar
       - mongo
+    volumes:
+      - "./:/outside"
   graylog:
     image: gophernet/netcat
     command: '-k -u -l -p 12201'

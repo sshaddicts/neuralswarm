@@ -7,6 +7,6 @@ import scala.compat.java8.FutureConverters
 
 
 suspend infix fun ActorRef.ask(message: Any): Any =
-        FutureConverters.toJava(Patterns.ask(this, message, 60000))
+        FutureConverters.toJava(Patterns.ask(this, message, 5000000))
                 .toCompletableFuture()
                 .await()
